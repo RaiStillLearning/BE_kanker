@@ -1,0 +1,1 @@
+// Endpoint untuk prediksi kanker

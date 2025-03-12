@@ -1,0 +1,19 @@
+{
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "mongoose": "^8.12.1",
+    "nodemon": "^3.1.9"
+  },
+  "name": "be_analisiskanker",
+  "version": "1.0.0",
+  "description": "database ini dibuat oleh raka, untuk tugas bootcamp dicoding yaitu analisis kanker paru paru, payudara, usus besar, prostat, getah bening",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon src/server.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
