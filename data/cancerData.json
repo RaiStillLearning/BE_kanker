@@ -1,0 +1,62 @@
+{
+  "cancers": [
+    {
+      "id": 1,
+      "cancerType": "breast",
+      "features": {
+        "ukuran_tumor": 2.5,
+        "usia_pasien": 45
+      },
+      "prediction": "malignant",
+      "accuracy": 95.5
+    },
+    {
+      "id": 2,
+      "cancerType": "Usus buntu",
+      "features": [
+        {
+          "ukuran_tumor": 2.5,
+          "usia_pasien": 45
+        }
+      ],
+      "prediction": "Jinak",
+      "accuracy": 95.5
+    },
+    {
+      "id": 3,
+      "cancerType": "Usus buntu",
+      "features": [
+        {
+          "ukuran_tumor": 2.5,
+          "usia_pasien": 45
+        }
+      ],
+      "prediction": "Jinak",
+      "accuracy": 95.5
+    },
+    {
+      "id": 4,
+      "cancerType": "Kanker Paru-paru",
+      "features": [
+        {
+          "ukuran_tumor": 2.5,
+          "usia_pasien": 45
+        }
+      ],
+      "prediction": "Jinak",
+      "accuracy": 95.5
+    },
+    {
+      "id": 5,
+      "cancerType": "Kanker ginjal",
+      "features": [
+        {
+          "ukuran_tumor": 2.5,
+          "usia_pasien": 45
+        }
+      ],
+      "prediction": "Jinak",
+      "accuracy": 95.5
+    }
+  ]
+}
