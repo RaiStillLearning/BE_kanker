@@ -8,6 +8,10 @@ const getSingleCancer = require("./controllers/getSingleCancer");
 const deleteCancer = require("./controllers/deleteCancer");
 const editCancer = require("./controllers/editCancer");
 
+server.get("/", (req, res) => {
+  res.send("Berhasil terhubung ke server");
+});
+
 mongoose
   .connect(process.env.MONGO_URL, {})
   .then(() => {
@@ -16,10 +20,6 @@ mongoose
   .catch((err) => {
     console.log("gagal terhubung ke MongoDB");
   });
-
-app.get("/", (req, res) => {
-  res.send("Berhasil connect");
-});
 
 server.use(express.json());
 
