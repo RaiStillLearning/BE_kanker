@@ -17,6 +17,10 @@ mongoose
     console.log("gagal terhubung ke MongoDB");
   });
 
+app.get("/", (req, res) => {
+  res.send("Berhasil connect");
+});
+
 server.use(express.json());
 
 //models
