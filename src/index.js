@@ -1,7 +1,6 @@
 require("dotenv").config();
 const express = require("express");
 const app = express();
-const serverless = require("serverless-http");
 const mongoose = require("mongoose");
 const addCancer = require("./controllers/addCancer");
 const getCancer = require("./controllers/getCancer");
@@ -37,7 +36,3 @@ app.patch("/api/predict/:id", editCancer);
 app.listen(3000, () => {
   console.log(`app berjalan di http://localhost:3000`);
 });
-
-
-module.exports = app;
-module.exports.handler = serverless(app);
