@@ -1,35 +1,29 @@
-require("dotenv").config();
 const express = require("express");
+const serverless = require("serverless-http");
 const mongoose = require("mongoose");
-
-const addCancer = require("./controllers/addCancer");
-const getCancer = require("./controllers/getCancer");
-const getSingleCancer = require("./controllers/getSingleCancer");
-const deleteCancer = require("./controllers/deleteCancer");
-const editCancer = require("./controllers/editCancer");
+require("dotenv").config();
 
 const app = express();
 
-// Connect MongoDB
-mongoose
-  .connect(process.env.MONGO_URL, {})
-  .then(() => {
-    console.log("Berhasil terhubung ke MongoDB");
-  })
-  .catch((err) => {
-    console.log("Gagal terhubung ke MongoDB");
-  });
+const addCancer = require("../src/controllers/addCancer");
+const getCancer = require("../src/controllers/getCancer");
+const getSingleCancer = require("../src/controllers/getSingleCancer");
+const deleteCancer = require("../src/controllers/deleteCancer");
+const editCancer = require("../src/controllers/editCancer");
 
 app.use(express.json());
 
-// Models
-require("./models/cancerPrediction");
-
-// Routes
 app.get("/", (req, res) => {
-  res.send("Berhasil terhubung ke app");
+  res.send("API ANALISIS KANKER JALAN BRO!!");
 });
 
+// Koneksi DB
+mongoose
+  .connect(process.env.MONGO_URL)
+  .then(() => console.log("MongoDB Connected"))
+  .catch(() => console.log("MongoDB Failed to Connect"));
+
+// Route API
 app.post("/api/predict", addCancer);
 app.get("/api/predict", getCancer);
 app.get("/api/predict/:id", getSingleCancer);
@@ -37,11 +31,5 @@ app.delete("/api/predict/:id", deleteCancer);
 app.put("/api/predict/:id", editCancer);
 app.patch("/api/predict/:id", editCancer);
 
-module.exports = app; // ini WAJIB buat Vercel
-
-// Biar local bisa jalan
-if (require.main === module) {
-  app.listen(3000, () => {
-    console.log(`App berjalan di http://localhost:3000`);
-  });
-}
+module.exports = app;
+module.exports.handler = serverless(app);
