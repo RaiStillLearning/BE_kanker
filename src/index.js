@@ -8,8 +8,8 @@ const getSingleCancer = require("./controllers/getSingleCancer");
 const deleteCancer = require("./controllers/deleteCancer");
 const editCancer = require("./controllers/editCancer");
 
-app.get("/api/hello", (req, res) => {
-  res.json("Berhasil terhubung ke app");
+app.get("/", (req, res) => {
+  res.send("Berhasil terhubung ke app");
 });
 
 mongoose
