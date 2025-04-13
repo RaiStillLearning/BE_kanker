@@ -1,20 +1,27 @@
+const axios = require("axios");
 const Cancer = require("../models/cancerPrediction");
 
 const editCancer = async (req, res) => {
   try {
     const { id } = req.params;
-    const { cancerType, features, prediction, accuracy } = req.body;
+    const { cancerType, features } = req.body;
 
     // Validasi input
-    if (!cancerType || !features || !prediction || !accuracy) {
+    if (!cancerType || !features) {
       return res.status(400).json({
         status: "failed",
-        message:
-          "Semua field harus diisi (cancerType, features, prediction, accuracy)",
+        message: "Field cancerType dan features harus diisi",
       });
     }
 
-    // Cari dan update data berdasarkan ID
+    // Kirim ulang fitur ke FastAPI untuk dapatkan prediksi baru
+    const response = await axios.post(
+      "http://localhost:8000/predict",
+      features
+    );
+    const { prediction, accuracy } = response.data;
+
+    // Update data
     const updatedCancer = await Cancer.findByIdAndUpdate(
       id,
       {
@@ -23,10 +30,9 @@ const editCancer = async (req, res) => {
         prediction,
         accuracy,
       },
-      { new: true } // Mengembalikan data yang sudah diupdate
+      { new: true }
     );
 
-    // Jika data tidak ditemukan
     if (!updatedCancer) {
       return res.status(404).json({
         status: "failed",
@@ -40,7 +46,7 @@ const editCancer = async (req, res) => {
       data: updatedCancer,
     });
   } catch (error) {
-    console.error("Error:", error);
+    console.error("Error:", error.message);
     return res.status(500).json({
       status: "failed",
       message: "Terjadi kesalahan saat mengupdate data",

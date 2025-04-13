@@ -5,29 +5,25 @@ const mongoose = require("mongoose");
 const cancerPredictionSchema = new mongoose.Schema({
   cancerType: {
     type: String,
-    enum: [
-      "Kanker Paru-paru",
-      "kanker payudara",
-      "Usus besar",
-      "Prostat",
-      "Getah bening",
-    ],
     required: true,
   },
   features: {
-    type: [{ key: String, value: Number }], //tergantung dari model yang dipake
+    type: Map,
+    of: mongoose.Schema.Types.Mixed, // Bisa menyimpan berbagai tipe data (boolean, number, dll)
     required: true,
   },
   prediction: {
     type: String,
-    enum: ["Jinak", "Ganas"],
+    enum: ["YES", "NO"], // Hanya bisa YES atau NO
     required: true,
+    default: "Pending", // Bisa default ke Pending, kalau belum diproses
   },
   accuracy: {
     type: Number,
     required: true,
+    default: 0, // Default accuracy 0, karena bisa dihitung dari FastAPI
   },
-  predictionDate: {
+  createdAt: {
     type: Date,
     default: Date.now,
   },
