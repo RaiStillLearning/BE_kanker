@@ -2,7 +2,14 @@ const Cancer = require("../models/cancerPrediction");
 
 const getCancer = async (req, res) => {
   try {
-    const cancers = await Cancer.find();
+    const { cancerType } = req.query; // Menambahkan query parameter untuk cancerType
+
+    let query = {}; // Query untuk filter data
+    if (cancerType) {
+      query.cancerType = cancerType; // Jika ada cancerType, filter berdasarkan cancerType
+    }
+
+    const cancers = await Cancer.find(query);
 
     return res.status(200).json({
       status: "success",
@@ -18,5 +25,6 @@ const getCancer = async (req, res) => {
     });
   }
 };
+
 
 module.exports = getCancer;

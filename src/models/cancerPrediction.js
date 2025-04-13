@@ -1,34 +1,24 @@
-// Schema untuk prediksi kanker
-
 const mongoose = require("mongoose");
 
 const cancerPredictionSchema = new mongoose.Schema({
-  cancerType: {
-    type: String,
-    required: true,
-  },
-  features: {
-    type: Map,
-    of: mongoose.Schema.Types.Mixed, // Bisa menyimpan berbagai tipe data (boolean, number, dll)
-    required: true,
-  },
-  prediction: {
-    type: String,
-    enum: ["YES", "NO"], // Hanya bisa YES atau NO
-    required: true,
-    default: "Pending", // Bisa default ke Pending, kalau belum diproses
-  },
-  accuracy: {
-    type: Number,
-    required: true,
-    default: 0, // Default accuracy 0, karena bisa dihitung dari FastAPI
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
+  cancerType: { type: String, required: true },
+  age: Number,
+  smoking: Number,
+  yellow_fingers: Number,
+  anxiety: Number,
+  peer_pressure: Number,
+  chronic_disease: Number,
+  fatigue: Number,
+  allergy: Number,
+  wheezing: Number,
+  alcohol_consuming: Number,
+  coughing: Number,
+  shortness_of_breath: Number,
+  swallowing_difficulty: Number,
+  chest_pain: Number,
 });
 
-const cancerPrediction = mongoose.model("predict", cancerPredictionSchema);
+// Gunakan nama model "Cancer" agar konsisten dengan controller lu
+const Cancer = mongoose.model("predict", cancerPredictionSchema);
 
-module.exports = cancerPrediction;
+module.exports = Cancer;
