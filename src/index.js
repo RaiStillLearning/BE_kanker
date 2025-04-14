@@ -1,31 +1,24 @@
-require("dotenv").config(); // Memuat konfigurasi dari .env
+require("dotenv").config(); // Load .env config
+
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 const axios = require("axios");
 const cors = require("cors");
 
-// Mengimpor controller untuk CRUD
-const addCancer = require("./controllers/addCancer");
+// Import controller untuk CRUD
 const getCancer = require("./controllers/getCancer");
 const getSingleCancer = require("./controllers/getSingleCancer");
 const deleteCancer = require("./controllers/deleteCancer");
 const editCancer = require("./controllers/editCancer");
-const Cancer = require("./models/cancerPrediction"); // Pastikan mengimpor model ini
 
-// Routing untuk pengecekan dasar
-app.get("/", (req, res) => {
-  res.send("Berhasil terhubung ke app");
-});
+const Cancer = require("./models/cancerPrediction");
 
-// CORS
-app.use(
-  cors({
-    origin: "http://localhost:3000", // Pastikan frontend berjalan di port yang benar
-  })
-);
+// Middleware
+app.use(express.json());
+app.use(cors({ origin: "http://localhost:3000" }));
 
-// Middleware untuk validasi API Key
+// API Key middleware
 app.use((req, res, next) => {
   const apiKey = req.headers["x-api-key"];
   if (!apiKey || apiKey !== process.env.API_KEY) {
@@ -34,20 +27,18 @@ app.use((req, res, next) => {
   next();
 });
 
-// Koneksi ke MongoDB
+// MongoDB Connection
 mongoose
-  .connect(process.env.MONGO_URL, {})
-  .then(() => {
-    console.log("Berhasil terhubung ke MongoDB");
-  })
-  .catch((err) => {
-    console.error("Gagal terhubung ke MongoDB:", err);
-  });
+  .connect(process.env.MONGO_URL)
+  .then(() => console.log("✅ MongoDB connected"))
+  .catch((err) => console.error("❌ MongoDB connection error:", err));
 
-// Middleware untuk parsing JSON
-app.use(express.json());
+// Route test
+app.get("/", (req, res) => {
+  res.send("🚀 Backend is running!");
+});
 
-// Route untuk prediksi kanker
+// POST: Prediksi kanker dan simpan ke MongoDB
 app.post("/api/predict", async (req, res) => {
   try {
     const {
@@ -68,92 +59,34 @@ app.post("/api/predict", async (req, res) => {
       chest_pain,
     } = req.body;
 
-    // Cek apakah jenis kanker sudah ada dalam database
-    let cancerData = await Cancer.findOne({ cancerType });
+    // Log data yang dikirim ke FastAPI untuk memastikan formatnya benar
+    console.log("Data yang dikirim ke FastAPI:", req.body);
 
-    // Jika data kanker belum ada, simpan data baru ke MongoDB
-    if (!cancerData) {
-      cancerData = new Cancer({
-        cancerType,
-        age,
-        smoking,
-        yellow_fingers,
-        anxiety,
-        peer_pressure,
-        chronic_disease,
-        fatigue,
-        allergy,
-        wheezing,
-        alcohol_consuming,
-        coughing,
-        shortness_of_breath,
-        swallowing_difficulty,
-        chest_pain,
-      });
-      await cancerData.save(); // Simpan data baru
-    }
-
-    // Lakukan prediksi ke model machine learning
+    // Kirim data ke model ML FastAPI
     const response = await axios.post(
-      "http://127.0.0.1:8000/predict", // URL ML model
-      req.body, // Kirim data untuk prediksi
-      {
-        headers: {
-          "X-API-KEY": process.env.API_KEY,
-        },
-      }
+      "http://127.0.0.1:8000/predict",
+      req.body,
+      { headers: { "X-API-KEY": process.env.API_KEY } }
     );
 
-    const { prediction_label, probability, processed_features_for_prediction } =
-      response.data;
+    // Log response dari FastAPI untuk memeriksa data yang diterima
+    console.log("Response dari FastAPI:", response.data);
 
-    // Kembalikan hasil prediksi
-    if (prediction_label && probability !== undefined) {
-      return res.status(200).json({
-        status: "success",
-        prediction: prediction_label,
-        probability: probability,
-        features_used: processed_features_for_prediction,
-      });
-    } else {
+    const {
+      prediction_label, // label prediksi (YES atau NO)
+      prediction_value, // nilai prediksi (1 atau 0)
+      probability, // nilai probabilitas
+    } = response.data;
+
+    // Cek apakah prediction_label ada dan valid
+    if (!prediction_label || !probability) {
       return res.status(500).json({
         status: "failed",
-        message: "Prediksi tidak tersedia",
-        raw: response.data,
+        message: "Prediksi gagal, hasil tidak ditemukan",
       });
     }
-  } catch (error) {
-    console.error("Error saat prediksi:", error);
-    return res.status(500).json({
-      status: "failed",
-      message: "Terjadi kesalahan saat melakukan prediksi",
-      error: error.message,
-    });
-  }
-});
 
-// Route untuk menambah jenis kanker baru
-app.post("/api/cancer", async (req, res) => {
-  try {
-    const {
-      cancerType,
-      age,
-      smoking,
-      yellow_fingers,
-      anxiety,
-      peer_pressure,
-      chronic_disease,
-      fatigue,
-      allergy,
-      wheezing,
-      alcohol_consuming,
-      coughing,
-      shortness_of_breath,
-      swallowing_difficulty,
-      chest_pain,
-    } = req.body;
-
-    // Menyimpan data kanker baru ke MongoDB
+    // Pastikan hanya data yang dibutuhkan yang disertakan
     const cancerData = new Cancer({
       cancerType,
       age,
@@ -170,32 +103,60 @@ app.post("/api/cancer", async (req, res) => {
       shortness_of_breath,
       swallowing_difficulty,
       chest_pain,
+      prediction_label, // Prediksi model (YES atau NO)
+      prediction_value, // Nilai prediksi (1 atau 0)
+      probability, // Probabilitas prediksi
     });
 
-    await cancerData.save(); // Simpan data kanker baru
-    return res.status(201).json({ status: "success", data: cancerData });
+    // Simpan ke MongoDB
+    await cancerData.save();
+
+    // Kirim respons dengan keterangan prediksi yang jelas
+    return res.status(201).json({
+      status: "success",
+      data: {
+        prediction_label,
+        prediction_value,
+        probability,
+        cancerData, // Data yang disimpan
+        id: cancerData._id, // ID yang baru saja disimpan
+      },
+    });
   } catch (error) {
-    console.error("Error saat menambah data kanker:", error);
+    console.error("❌ Error saat prediksi:", error);
+    if (error.response) {
+      // Jika error datang dari FastAPI atau request
+      console.error("Response Error:", error.response.data);
+    } else if (error.request) {
+      // Jika tidak ada response
+      console.error("Request Error:", error.request);
+    } else {
+      // Error lain
+      console.error("Error:", error.message);
+    }
     return res.status(500).json({
       status: "failed",
-      message: "Terjadi kesalahan saat menambah data kanker",
+      message: "Terjadi kesalahan saat melakukan prediksi",
       error: error.message,
     });
   }
 });
 
-// Route untuk CRUD data kanker
+// CRUD routes
 app.get("/api/predict", getCancer);
 app.get("/api/predict/:id", getSingleCancer);
 app.delete("/api/predict/:id", deleteCancer);
 app.put("/api/predict/:id", editCancer);
+
+// PATCH: Update sebagian data
 app.patch("/api/predict/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const updateData = req.body; // Ambil data yang akan diupdate
+    const updateData = req.body;
 
-    // Cek apakah data dengan id tersebut ada
-    let cancerData = await Cancer.findById(id);
+    const cancerData = await Cancer.findByIdAndUpdate(id, updateData, {
+      new: true,
+    });
 
     if (!cancerData) {
       return res.status(404).json({
@@ -204,17 +165,12 @@ app.patch("/api/predict/:id", async (req, res) => {
       });
     }
 
-    // Update data kanker
-    cancerData = await Cancer.findByIdAndUpdate(id, updateData, {
-      new: true, // Mengembalikan data yang sudah diupdate
-    });
-
     return res.status(200).json({
       status: "success",
       data: cancerData,
     });
   } catch (error) {
-    console.error("Error saat mengupdate data kanker:", error);
+    console.error("❌ Error saat patch data:", error);
     return res.status(500).json({
       status: "failed",
       message: "Terjadi kesalahan saat mengupdate data kanker",
@@ -223,7 +179,7 @@ app.patch("/api/predict/:id", async (req, res) => {
   }
 });
 
-// Menjalankan server
+// Jalankan server
 app.listen(3000, () => {
-  console.log("App berjalan di http://localhost:3000");
+  console.log("✅ Server ready at http://localhost:3000");
 });
