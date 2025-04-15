@@ -72,7 +72,7 @@ app.post("/api/predict", async (req, res) => {
 
     // Kirim data ke model ML FastAPI
     const response = await axios.post(
-      "http://127.0.0.1:8000/predict",
+      `${process.env.FASTAPI_URL}/predict`, // URL FastAPI
       req.body,
       { headers: { "X-API-KEY": process.env.API_KEY } }
     );
