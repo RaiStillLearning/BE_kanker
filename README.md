@@ -28,3 +28,26 @@ MONGO_URL=your_mongodb_connection_string      # untuk koneksi database
 ML_API_URL=https://your-fastapi-domain.com    # URL FastAPI yang sudah dideploy
 API_KEY=your_secret_api_key                   # API Key dari backend ML
 ```
+
+---
+
+
+## Isi body raw json
+{
+  "cancerType": "kanker paru paru",
+  "age": 40,
+  "smoking": 1,
+  "yellow_fingers": 1,
+  "anxiety": 1,
+  "peer_pressure": 1,
+  "chronic_disease": 1,
+  "fatigue": 1,
+  "allergy": 1,
+  "wheezing": 1,
+  "alcohol_consuming": 1,
+  "coughing": 1,
+  "shortness_of_breath": 0,
+  "swallowing_difficulty": 0,
+  "chest_pain": 0
+}
+
