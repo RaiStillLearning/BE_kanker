@@ -14,9 +14,15 @@ const editCancer = require("./controllers/editCancer");
 
 const Cancer = require("./models/cancerPrediction");
 
-// Middleware
-app.use(express.json());
-app.use(cors({ origin: "http://localhost:3000" }));
+
+// CORS
+app.use(
+  cors({
+    origin: "http://localhost:3001", // alamat frontend kamu
+    methods: ["POST"],
+    allowedHeaders: ["Content-Type", "x-api-key"],
+  })
+);
 
 // API Key middleware
 app.use((req, res, next) => {

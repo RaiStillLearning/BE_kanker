@@ -19,5 +19,8 @@
     "dev": "nodemon src/index.js"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^22.14.1"
+  }
 }
