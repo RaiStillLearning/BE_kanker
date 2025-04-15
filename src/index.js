@@ -15,7 +15,6 @@ const editCancer = require("./controllers/editCancer");
 const Cancer = require("./models/cancerPrediction");
 
 // CORS
-const cors = require("cors");
 
 app.use(
   cors({
@@ -27,7 +26,6 @@ app.use(
 );
 
 // Optional: handle preflight (OPTIONS)
-app.options("*", cors());
 
 // API Key middleware
 app.use((req, res, next) => {
