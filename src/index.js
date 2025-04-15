@@ -20,7 +20,7 @@ app.use(express.json());
 // CORS
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "https://projek-analisis-kanker.vercel.app",
   })
 );
 
@@ -33,7 +33,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(cors({ origin: "http://localhost:3000" }));
+app.use(cors({ origin: "https://projek-analisis-kanker.vercel.app" }));
 
 // MongoDB Connection
 mongoose
