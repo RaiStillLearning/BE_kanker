@@ -27,34 +27,51 @@ Clone repo ini:
 bash
 Salin
 Edit
-git clone https://github.com/username/backend-analisis-kanker.git
-cd backend-analisis-kanker
+git clone https://github.com/RaiStillLearning/BE_kanker.git
+cd BE_kanker
 Install dependensi:
-
-bash
-Salin
-Edit
 npm install
+
 Buat file .env:
 
-ini
-Salin
-Edit
-MONGO_URL=your_mongodb_connection_string
-ML_API_URL=https://your-fastapi-domain.com
-API_KEY=your_secret_api_key
+MONGO_URL=your_mongodb_connection_string         # untuk koneksi database
+ML_API_URL=https://your-fastapi-domain.com       # url machine learning yang sudah di deploy
+API_KEY=your_secret_api_key                      # API dari machine learning
 Jalankan server:
 
 bash
 Salin
 Edit
-node server.js
+npm start
 Server akan berjalan di http://localhost:5000
 
 🔐 Autentikasi
 Semua request harus menyertakan header berikut:
-
-http
-Salin
-Edit
 X-API-KEY: your_secret_api_key
+
+
+test di postman dengan url berikut
+http://localhost:5000/api/predict
+pastikan headers terisi dengan
+X-API-KEY:"VALUE YOUR API"
+content-type: applicattion/json
+
+isi format raw json di postman
+{
+  "cancerType": "kanker paru paru",
+  "age": 40,
+  "smoking": 1,
+  "yellow_fingers": 1,
+  "anxiety": 1,
+  "peer_pressure": 1,
+  "chronic_disease": 1,
+  "fatigue": 1,
+  "allergy": 1,
+  "wheezing": 1,
+  "alcohol_consuming": 1,
+  "coughing": 1,
+  "shortness_of_breath": 0,
+  "swallowing_difficulty": 0,
+  "chest_pain": 0
+}
+
