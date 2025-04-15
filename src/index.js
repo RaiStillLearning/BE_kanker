@@ -15,17 +15,11 @@ const editCancer = require("./controllers/editCancer");
 const Cancer = require("./models/cancerPrediction");
 
 // CORS
-
 app.use(
   cors({
-    origin: "http://localhost:3000", // frontend
-    methods: ["GET", "POST", "OPTIONS"], // tambahkan OPTIONS
-    allowedHeaders: ["Content-Type", "x-api-key"],
-    credentials: true, // opsional kalau pakai cookie/token
+    origin: "http://localhost:3000",
   })
 );
-
-// Optional: handle preflight (OPTIONS)
 
 // API Key middleware
 app.use((req, res, next) => {
@@ -35,6 +29,8 @@ app.use((req, res, next) => {
   }
   next();
 });
+
+app.use(cors({ origin: "http://localhost:3000" }));
 
 // MongoDB Connection
 mongoose
