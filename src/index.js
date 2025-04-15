@@ -14,11 +14,10 @@ const editCancer = require("./controllers/editCancer");
 
 const Cancer = require("./models/cancerPrediction");
 
-
 // CORS
 app.use(
   cors({
-    origin: "http://localhost:3001", // alamat frontend kamu
+    origin: "http://localhost:3000", // alamat frontend kamu
     methods: ["POST"],
     allowedHeaders: ["Content-Type", "x-api-key"],
   })
