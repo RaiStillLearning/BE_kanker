@@ -14,6 +14,9 @@ const editCancer = require("./controllers/editCancer");
 
 const Cancer = require("./models/cancerPrediction");
 
+//json express
+app.use(express.json());
+
 // CORS
 app.use(
   cors({
